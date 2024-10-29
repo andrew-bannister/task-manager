@@ -2,8 +2,6 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TaskController;
-use App\Http\Resources\TaskResource;
-use App\Models\Task;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -26,3 +24,8 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::get('/test', function () { return Inertia::render('referenceWelcome', [
+    'laravelVersion' => Application::VERSION,
+    'phpVersion' => PHP_VERSION,
+]);});
