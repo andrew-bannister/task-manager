@@ -29,7 +29,7 @@ function handleImageError() {
 </script>
 
 <template>
-    <Head title="Welcome" />
+    <Head title="TASKMANAGER" />
     <div class="bg-current text-black/50 dark:bg-black dark:text-white/50">
         <img
             id="background"
@@ -44,12 +44,13 @@ function handleImageError() {
                     class="items-center gap-2 py-10"
                 >
                     <h1 class="text-5xl flex justify-center">TASKMANAGER</h1>
-<!--                    <div class="flex justify-end">-->
-<!--                        <LoginDashboard :canLogin="canLogin" :canRegister="canRegister"/>-->
-<!--                    </div>-->
                 </header>
 
                 <main class="mt-6">
+                    <p class="flex justify-center pb-5">
+                        Welcome to the best goddamn task management application you've ever seen.
+                    </p>
+                    <LoginDashboard :canLogin="canLogin" :canRegister="canRegister"/>
                 </main>
             </div>
         </div>

@@ -1,5 +1,5 @@
 <template>
-    <nav v-if="canLogin" class="-mx-3 flex flex-1 justify-end">
+    <nav v-if="canLogin" class="-mx-3 flex flex-1 justify-center">
         <Link
             v-if="$page.props.auth.user"
             :href="route('dashboard')"

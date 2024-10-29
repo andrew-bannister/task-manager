@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Status extends Model
 {
-    /** @use HasFactory<\Database\Factories\TaskStatusFactory> */
+    /** @use HasFactory<\Database\Factories\StatusFactory> */
     use HasFactory;
 
     public function tasks(): HasMany
