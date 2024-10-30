@@ -29,7 +29,7 @@ const column_no = 'grid-cols-' + props.statuses.length;
                     Dashboard
                 </h2>
                 <div class="grid place-items-end">
-                    <Link class="py-4 px-8 bg-green-300 rounded-lg border-2 border-green-400 hover:border-black" :href="route('new-task')">New Task</Link>
+                    <Link class="py-2 px-8 bg-green-300 rounded-lg border-2 border-green-400 hover:border-black" :href="route('new-task')">New Task</Link>
                 </div>
             </div>
         </template>
