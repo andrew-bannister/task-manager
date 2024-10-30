@@ -25,7 +25,7 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-Route::get('/test', function () { return Inertia::render('referenceWelcome', [
+Route::get('/test', function () { return Inertia::render('ReferenceWelcome', [
     'laravelVersion' => Application::VERSION,
     'phpVersion' => PHP_VERSION,
 ]);});
