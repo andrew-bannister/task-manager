@@ -13,7 +13,7 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
-});
+})->name('home');
 
 Route::get('/dashboard', [TaskController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -25,7 +25,5 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-Route::get('/test', function () { return Inertia::render('ReferenceWelcome', [
-    'laravelVersion' => Application::VERSION,
-    'phpVersion' => PHP_VERSION,
-]);});
+Route::get('/new-task', [TaskController::class, 'create'])->middleware(['auth', 'verified'])->name('new-task');
+Route::post('new-task', [TaskController::class, 'store'])->middleware(['auth', 'verified']);

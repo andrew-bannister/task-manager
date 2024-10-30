@@ -8,7 +8,7 @@
 <script setup>
 const props = defineProps({
     task: {
-        type: Array
+        type: Object
     }
 })
 </script>

@@ -2,16 +2,14 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import TaskWidget from '@/Components/TaskWidget.vue';
 import { Head } from '@inertiajs/vue3';
+import {Link} from "@inertiajs/vue3";
 
-const props = defineProps({
+let props = defineProps({
     user: {
         type: Object
     },
     statuses: {
         type: Array
-    },
-    tasks: {
-        type: Object
     },
 });
 
@@ -24,13 +22,15 @@ const column_no = 'grid-cols-' + props.statuses.length;
 
     <AuthenticatedLayout>
         <template #header>
-            <h2
-                class="text-xl font-semibold leading-tight text-gray-800"
-            >
-                Dashboard
-            </h2>
-            <div class="grid place-items-end">
-                <button class="py-4 px-8 bg-green-300 rounded-lg border-2 border-green-400 hover:border-black">New Task</button>
+            <div class="grid grid-cols-2 items-center">
+                <h2
+                    class="text-xl font-semibold leading-tight text-gray-800"
+                >
+                    Dashboard
+                </h2>
+                <div class="grid place-items-end">
+                    <Link class="py-4 px-8 bg-green-300 rounded-lg border-2 border-green-400 hover:border-black" :href="route('new-task')">New Task</Link>
+                </div>
             </div>
         </template>
         <div class="grid gap-6 lg-gap-8 p-4" :class="column_no">
@@ -38,7 +38,7 @@ const column_no = 'grid-cols-' + props.statuses.length;
                 <h2>{{ status.name }}</h2>
                 <div>
                     <div v-for="task in status.tasks" class="my-4">
-                        <TaskWidget :task="task" />
+                        <TaskWidget :task="task"/>
                     </div>
                 </div>
             </div>

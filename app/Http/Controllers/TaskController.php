@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\TaskResource;
+use App\Http\Requests\StoreTaskRequest;
 use App\Models\Task;
-use App\Models\User;
+use App\Models\Type;
+use App\Services\TaskService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -15,22 +16,12 @@ class TaskController extends Controller
      */
     public function index()
     {
+        $taskService = new TaskService();
         $user = auth()->user();
 
-        $statuses = json_decode(User::with(['statuses' => function ($query) {
-            $query->orderBy('order', 'asc');
-        }])->find($user->id)->statuses, true);
-
-        $tasks = json_decode(
-            json_encode(
-                TaskResource::collection(Task::where('user_id', $user->id)->get())
-            ), true);
-
-        foreach ($statuses as $key => $status) {
-            $statuses[$key]['tasks'] = array_filter($tasks, function ($task) use ($status) {
-                return $task['status']['id'] === $status['id'];
-            });
-        }
+        $statuses = $taskService->getStatuses($user);
+        $tasks = $taskService->getTasks($user);
+        $statuses = $taskService->getTasksInCorrectStatus($statuses, $tasks);
 
         return Inertia::render('Dashboard', [
             'user' => $user,
@@ -43,15 +34,29 @@ class TaskController extends Controller
      */
     public function create()
     {
-        //
+        $taskService = new TaskService();
+
+        $types = Type::all()->pluck('name');
+
+        $user = auth()->user();
+        $statuses = $taskService->getStatuses($user);
+
+        return Inertia::render('NewTask', [
+            'types' => $types,
+            'statuses' => $statuses,
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreTaskRequest $request): void
     {
-        //
+        $taskService = new TaskService();
+        $validated = $request->validated();
+        $taskFillables = $taskService->arrangeTaskArrayForInput($validated);
+
+        $task = Task::create($taskFillables);
     }
 
     /**
