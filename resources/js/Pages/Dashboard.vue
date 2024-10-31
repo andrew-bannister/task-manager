@@ -1,8 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import TaskWidget from '@/Components/TaskWidget.vue';
-import { Head } from '@inertiajs/vue3';
-import {Link} from "@inertiajs/vue3";
+import { Head, Link } from '@inertiajs/vue3';
 
 let props = defineProps({
     user: {
@@ -29,7 +28,7 @@ const column_no = 'grid-cols-' + props.statuses.length;
                     Dashboard
                 </h2>
                 <div class="grid place-items-end">
-                    <Link class="py-2 px-8 bg-green-300 rounded-lg border-2 border-green-400 hover:border-black" :href="route('new-task')">New Task</Link>
+                    <Link class="py-2 px-8 bg-green-300 rounded-lg border-2 border-green-400 hover:border-black" :href="route('task.new')">New Task</Link>
                 </div>
             </div>
         </template>

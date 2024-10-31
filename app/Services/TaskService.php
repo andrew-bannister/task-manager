@@ -48,8 +48,16 @@ class TaskService
         ];
     }
 
-    private function getTypeFromName(string $name): Type
+    public function getTypeFromName(string $name): Type
     {
          return Type::where('name', $name)->first();
+    }
+
+    public function addFullTypeAndStatusToTask(Task $task): Task
+    {
+        $task['type'] = Type::find($task['type_id']);
+        $task['status'] = Status::find($task['status_id']);
+
+        return $task;
     }
 }

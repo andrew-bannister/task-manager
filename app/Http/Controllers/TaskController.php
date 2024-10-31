@@ -7,6 +7,7 @@ use App\Models\Task;
 use App\Models\Type;
 use App\Services\TaskService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 
 class TaskController extends Controller
@@ -62,34 +63,75 @@ class TaskController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(?int $id)
     {
-        $task = Task::find($id);
+        if (!is_null(Task::find($id))) {
+            $taskService = new TaskService();
 
-        return response()->json($task);
+            $task = Task::find($id);
+            $task = $taskService->addFullTypeAndStatusToTask($task);
+
+            return Inertia::render('TaskView', [
+                'task' => $task,
+            ]);
+        }
+
+        Http::get(route('dashboard'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Task $task)
+    public function edit($id)
     {
-        //
+        $taskService = new TaskService();
+
+        $task = Task::find($id);
+        $task = $taskService->addFullTypeAndStatusToTask($task);
+
+        $types = Type::all()->pluck('name');
+
+        $user = auth()->user();
+        $statuses = $taskService->getStatuses($user);
+
+        return Inertia::render('EditTask', [
+            'task' => $task,
+            'types' => $types,
+            'statuses' => $statuses,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Task $task)
+    public function update(Request $request, $id)
     {
-        //
+        $taskService = new TaskService();
+        $task = Task::find($id);
+
+        $typeId = $taskService->getTypeFromName($request->type)->id;
+
+        foreach ($request->request as $key => $val) {
+            if ($key == 'type') {
+                $task->type_id = $typeId;
+                continue;
+            }
+            if ($key == 'status') {
+                $task->status_id = $val['id'];
+                continue;
+            }
+            $task->$key = $val;
+        }
+
+        $task->save();
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Task $task)
+    public function destroy($id)
     {
-        //
+        $task = Task::find($id);
+        $task->delete();
     }
 }

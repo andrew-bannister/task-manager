@@ -1,47 +1,51 @@
 <script setup>
-import {Head, useForm} from "@inertiajs/vue3";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import {Inertia} from "@inertiajs/inertia";
-import InputLabel from "@/Components/InputLabel.vue";
-import TextInput from "@/Components/TextInput.vue";
-import TextboxInput from "@/Components/TextboxInput.vue";
-import PrimaryButton from "@/Components/PrimaryButton.vue";
 
-const form = useForm({
-    label: '',
-    title: '',
-    description: '',
-    type: '',
-    status: '',
-});
+import {Inertia} from "@inertiajs/inertia";
+import { Head, useForm } from "@inertiajs/vue3"
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import InputLabel from "@/Components/InputLabel.vue";
+import TextboxInput from "@/Components/TextboxInput.vue";
+import TextInput from "@/Components/TextInput.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
 
 const props = defineProps({
     types: {
         type: Object
     },
-    statuses: {
+    statuses : {
+        type: Array
+    },
+    task: {
         type: Array
     }
 });
 
-const submit = () => {
-    form.post(route('task.store'), {
-        onFinish: () => {
-            Inertia.visit(route('dashboard'))
-        }
-    })
-}
+const form = useForm({
+    label: props.task.label,
+    title: props.task.title,
+    description: props.task.description,
+    type: props.task.type.name,
+    status: props.task.status,
+})
 
+const submit = () => {
+    form.put(`/tasks/${props.task.id}`, {
+        data: {
+            task: props.task,
+        },
+        onFinish: () => Inertia.visit('/tasks/' + props.task.id)
+    });
+}
 </script>
 
 <template>
-    <Head title="New Task" />
+    <Head title="Edit Task" />
     <AuthenticatedLayout>
         <template #header>
             <h2
                 class="text-xl font-semibold leading-tight text-gray-800"
             >
-                New Task
+                Edit Task
             </h2>
         </template>
         <form @submit.prevent="submit">
@@ -106,9 +110,8 @@ const submit = () => {
                 :class="{'opacity-25': form.processing}"
                 :disabled="form.processing"
             >
-                Submit
+                Save
             </PrimaryButton>
-
         </form>
     </AuthenticatedLayout>
 </template>

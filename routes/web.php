@@ -25,7 +25,15 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-Route::get('/new-task', [TaskController::class, 'create'])->middleware(['auth', 'verified'])->name('new-task');
-Route::post('new-task', [TaskController::class, 'store'])->middleware(['auth', 'verified']);
-
-Route::get('/tasks/{id}', [TaskController::class, 'show'])->middleware(['auth', 'verified']);
+Route::group(['prefix' => 'tasks', 'middleware' => ['auth', 'verified']], function () {
+    Route::prefix('new')->group(function () {
+        Route::get('/', [TaskController::class, 'create'])->name('task.new');
+        Route::post('/', [TaskController::class, 'store'])->name('task.store');
+    });
+    Route::prefix('{id}')->group(function () {
+        Route::get('/', [TaskController::class, 'show'])->name('task');
+        Route::get('/edit', [TaskController::class, 'edit'])->name('task.edit');
+        Route::get('/delete', [TaskController::class, 'destroy']);
+        Route::put('/', [TaskController::class, 'update']);
+    });
+});
