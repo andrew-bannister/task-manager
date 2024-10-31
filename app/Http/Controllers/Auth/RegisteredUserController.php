@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Status;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -43,6 +44,11 @@ class RegisteredUserController extends Controller
         ]);
 
         event(new Registered($user));
+
+        for ($i = 1; $i <= 4; $i++) {
+            $status = Status::find($i);
+            $user->statuses()->attach($status, ['order' => $i]);
+        }
 
         Auth::login($user);
 

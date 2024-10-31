@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StatusController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -35,5 +36,13 @@ Route::group(['prefix' => 'tasks', 'middleware' => ['auth', 'verified']], functi
         Route::get('/edit', [TaskController::class, 'edit'])->name('task.edit');
         Route::get('/delete', [TaskController::class, 'destroy']);
         Route::put('/', [TaskController::class, 'update']);
+    });
+});
+
+Route::group(['prefix' => 'statuses', 'middleware' => ['auth', 'verified']], function () {
+    Route::get('/', [StatusController::class, 'index'])->name('statuses');
+    Route::prefix('status')->group(function () {
+        Route::get('/new', [StatusController::class, 'create'])->name('status.new');
+        Route::get('/edit', [StatusController::class, 'edit'])->name('status.edit');
     });
 });

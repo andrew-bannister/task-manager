@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTaskRequest;
+use App\Http\Resources\TaskResource;
 use App\Models\Task;
 use App\Models\Type;
 use App\Services\TaskService;
@@ -12,20 +13,22 @@ use Inertia\Inertia;
 
 class TaskController extends Controller
 {
+    public function __construct(TaskService $taskService)
+    {
+        $this->taskService = $taskService;
+        $this->user = auth()->user();
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $taskService = new TaskService();
-        $user = auth()->user();
-
-        $statuses = $taskService->getStatuses($user);
-        $tasks = $taskService->getTasks($user);
-        $statuses = $taskService->getTasksInCorrectStatus($statuses, $tasks);
+        $statuses = $this->taskService->getStatuses($this->user);
+        $tasks = $this->taskService->getTasks($this->user);
+        $statuses = $this->taskService->getTasksInCorrectStatus($statuses, $tasks);
 
         return Inertia::render('Dashboard', [
-            'user' => $user,
+            'user' => $this->user,
             'statuses' => $statuses,
         ]);
     }
@@ -35,12 +38,8 @@ class TaskController extends Controller
      */
     public function create()
     {
-        $taskService = new TaskService();
-
         $types = Type::all()->pluck('name');
-
-        $user = auth()->user();
-        $statuses = $taskService->getStatuses($user);
+        $statuses = $this->taskService->getStatuses($this->user);
 
         return Inertia::render('NewTask', [
             'types' => $types,
@@ -53,11 +52,10 @@ class TaskController extends Controller
      */
     public function store(StoreTaskRequest $request): void
     {
-        $taskService = new TaskService();
         $validated = $request->validated();
-        $taskFillables = $taskService->arrangeTaskArrayForInput($validated);
+        $taskFillables = $this->taskService->arrangeTaskArrayForInput($validated);
 
-        $task = Task::create($taskFillables);
+        $task = new TaskResource(Task::create($taskFillables));
     }
 
     /**
@@ -65,18 +63,12 @@ class TaskController extends Controller
      */
     public function show(?int $id)
     {
-        if (!is_null(Task::find($id))) {
-            $taskService = new TaskService();
+        $task = new TaskResource(Task::find($id));
+        $task = $this->taskService->addFullTypeAndStatusToTask($task);
 
-            $task = Task::find($id);
-            $task = $taskService->addFullTypeAndStatusToTask($task);
-
-            return Inertia::render('TaskView', [
-                'task' => $task,
-            ]);
-        }
-
-        Http::get(route('dashboard'));
+        return Inertia::render('TaskView', [
+            'task' => $task,
+        ]);
     }
 
     /**
@@ -84,15 +76,11 @@ class TaskController extends Controller
      */
     public function edit($id)
     {
-        $taskService = new TaskService();
-
         $task = Task::find($id);
-        $task = $taskService->addFullTypeAndStatusToTask($task);
+        $task = $this->taskService->addFullTypeAndStatusToTask($task);
 
         $types = Type::all()->pluck('name');
-
-        $user = auth()->user();
-        $statuses = $taskService->getStatuses($user);
+        $statuses = $this->taskService->getStatusNames($this->user);
 
         return Inertia::render('EditTask', [
             'task' => $task,
@@ -104,20 +92,16 @@ class TaskController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): void
     {
-        $taskService = new TaskService();
         $task = Task::find($id);
 
-        $typeId = $taskService->getTypeFromName($request->type)->id;
+        $typeId = $this->taskService->getTypeFromName($request->type)->id;
+        $statusId= $this->taskService->getStatusFromName($request->status)->id;
 
         foreach ($request->request as $key => $val) {
-            if ($key == 'type') {
-                $task->type_id = $typeId;
-                continue;
-            }
-            if ($key == 'status') {
-                $task->status_id = $val['id'];
+            if ($key == 'type' || $key == 'status') {
+                $task->{$key . '_id'} = ${$key . 'Id'};
                 continue;
             }
             $task->$key = $val;
@@ -133,5 +117,6 @@ class TaskController extends Controller
     {
         $task = Task::find($id);
         $task->delete();
+        return redirect()->route('dashboard');
     }
 }

@@ -21,19 +21,19 @@ const props = defineProps({
 });
 
 const form = useForm({
-    label: props.task.label,
-    title: props.task.title,
-    description: props.task.description,
-    type: props.task.type.name,
-    status: props.task.status,
+    label: props.task.data.label,
+    title: props.task.data.title,
+    description: props.task.data.description,
+    type: props.task.data.type.name,
+    status: props.task.data.status.name,
 })
 
 const submit = () => {
-    form.put(`/tasks/${props.task.id}`, {
+    form.put(`/tasks/${props.task.data.id}`, {
         data: {
-            task: props.task,
+            task: props.task.data,
         },
-        onFinish: () => Inertia.visit('/tasks/' + props.task.id)
+        onFinish: () => Inertia.visit('/tasks/' + props.task.data.id)
     });
 }
 </script>
@@ -100,13 +100,13 @@ const submit = () => {
                 <select v-model="form.status">
                     <option disabled value="">Select a task status</option>
                     <option v-for="status in statuses" :value="status">
-                        {{ status.name }}
+                        {{ status }}
                     </option>
                 </select>
             </div>
 
             <PrimaryButton
-                class="ms-4"
+                class="ms-4 mt-4"
                 :class="{'opacity-25': form.processing}"
                 :disabled="form.processing"
             >

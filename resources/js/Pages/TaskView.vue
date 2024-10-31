@@ -19,12 +19,10 @@ let props = defineProps({
                     Task Viewer
                 </h2>
                 <div class="grid place-items-end">
-                    <div class="grid place-items-end">
-                        <Link class="py-2 px-8 bg-green-300 rounded-lg border-2 border-green-400 hover:border-black" :href="this.taskRoute + task.id + '/edit'">Edit Task</Link>
-                    </div>
-                    <div class="grid place-items-end">
-                        <Link class="py-2 px-8 bg-green-300 rounded-lg border-2 border-green-400 hover:border-black" :href="this.taskRoute + task.id + '/delete'">Delete Task</Link>
-                    </div>
+                    <p>
+                        <Link class="py-2 px-8 mx-2 bg-green-300 rounded-lg border-2 border-green-400 hover:border-black" :href="this.taskRoute + task.data.id + '/edit'">Edit Task</Link>
+                        <Link class="py-2 px-8 bg-red-300 rounded-lg border-2 border-red-400 hover:border-black" :href="this.taskRoute + task.data.id + '/delete'">Delete Task</Link>
+                    </p>
                 </div>
             </div>
         </template>
@@ -33,7 +31,7 @@ let props = defineProps({
                 <label for="label">Task Label:</label>
             </p>
             <p>
-                <span id="label">{{ task.label }}</span>
+                <span id="label">{{ task.data.label }}</span>
             </p>
         </div>
         <div class="mt-4">
@@ -41,7 +39,7 @@ let props = defineProps({
                 <label for="title">Task Title:</label>
             </p>
             <p>
-                <span id="title">{{ task.title }}</span>
+                <span id="title">{{ task.data.title }}</span>
             </p>
         </div>
         <div class="mt-4">
@@ -49,7 +47,7 @@ let props = defineProps({
                 <label for="description">Task Description:</label>
             </p>
             <p>
-                <span id="description">{{ task.description }}</span>
+                <span id="description">{{ task.data.description }}</span>
             </p>
         </div>
         <div class="mt-4">
@@ -57,7 +55,7 @@ let props = defineProps({
                 <label for="type">Task Type:</label>
             </p>
             <p>
-                <span id="type">{{ task.type.name }}</span>
+                <span id="type">{{ task.data.type.name }}</span>
             </p>
         </div>
         <div class="mt-4">
@@ -65,7 +63,7 @@ let props = defineProps({
                 <label for="status">Task Status:</label>
             </p>
             <p>
-                <span id="status">{{ task.status.name }}</span>
+                <span id="status">{{ task.data.status.name }}</span>
             </p>
         </div>
     </AuthenticatedLayout>

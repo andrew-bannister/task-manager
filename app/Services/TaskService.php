@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Http\Resources\StatusResource;
 use App\Http\Resources\TaskResource;
+use App\Http\Resources\TypeResource;
 use App\Models\Status;
 use App\Models\Task;
 use App\Models\Type;
@@ -15,6 +17,13 @@ class TaskService
         return json_decode(User::with(['statuses' => function ($query) {
             $query->orderBy('order', 'asc');
         }])->find($user->id)->statuses, true);
+    }
+
+    public function getStatusNames(User $user): array
+    {
+        return json_decode(User::with(['statuses' => function ($query) {
+            $query->orderBy('order', 'asc');
+        }])->find($user->id)->statuses->pluck('name'), true);
     }
 
     public function getTasks(User $user): array
@@ -48,15 +57,20 @@ class TaskService
         ];
     }
 
-    public function getTypeFromName(string $name): Type
+    public function getTypeFromName(string $name): TypeResource
     {
-         return Type::where('name', $name)->first();
+         return new TypeResource(Type::where('name', $name)->first());
     }
 
-    public function addFullTypeAndStatusToTask(Task $task): Task
+    public function getStatusFromName(string $name): StatusResource
     {
-        $task['type'] = Type::find($task['type_id']);
-        $task['status'] = Status::find($task['status_id']);
+         return new StatusResource(Status::where('name', $name)->first());
+    }
+
+    public function addFullTypeAndStatusToTask(TaskResource $task): TaskResource
+    {
+        $task['type'] = new TypeResource(Type::find($task->type_id));
+        $task['status'] = new StatusResource(Status::find($task->status_id));
 
         return $task;
     }
