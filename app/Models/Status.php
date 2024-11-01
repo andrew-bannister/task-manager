@@ -11,6 +11,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Status extends Model
 {
+    protected $fillable = [
+        'name'
+    ];
     /** @use HasFactory<\Database\Factories\StatusFactory> */
     use HasFactory;
     use SoftDeletes;

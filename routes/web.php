@@ -42,7 +42,10 @@ Route::group(['prefix' => 'tasks', 'middleware' => ['auth', 'verified']], functi
 Route::group(['prefix' => 'statuses', 'middleware' => ['auth', 'verified']], function () {
     Route::get('/', [StatusController::class, 'index'])->name('statuses');
     Route::prefix('status')->group(function () {
-        Route::get('/new', [StatusController::class, 'create'])->name('status.new');
-        Route::get('/edit', [StatusController::class, 'edit'])->name('status.edit');
+        Route::post('/store', [StatusController::class, 'store'])->name('status.new');
+        Route::prefix('{id}')->group(function () {
+            Route::put('/update', [StatusController::class, 'update'])->name('status.update');
+            Route::get('/delete', [StatusController::class, 'destroy']);
+        });
     });
 });
