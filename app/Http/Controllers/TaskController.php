@@ -76,7 +76,7 @@ class TaskController extends Controller
      */
     public function edit($id)
     {
-        $task = Task::find($id);
+        $task = new TaskResource(Task::find($id));
         $task = $this->taskService->addFullTypeAndStatusToTask($task);
 
         $types = Type::all()->pluck('name');
