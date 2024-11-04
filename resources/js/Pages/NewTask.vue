@@ -7,14 +7,6 @@ import TextInput from "@/Components/TextInput.vue";
 import TextboxInput from "@/Components/TextboxInput.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 
-const form = useForm({
-    label: '',
-    title: '',
-    description: '',
-    type: '',
-    status: '',
-});
-
 const props = defineProps({
     types: {
         type: Object
@@ -56,7 +48,11 @@ const submit = () => {
                         required
                         autofocus
                         autocomplete="label"
+                        :maxlength="labelMaxLength"
                     />
+                    <p v-if="maxLabelLengthReached" class="text-red-500">
+                        Warning! Max label length is {{ labelMaxLength }} characters.
+                    </p>
                 </div>
 
                 <div class="mt-4">
@@ -68,7 +64,11 @@ const submit = () => {
                         v-model="form.title"
                         required
                         autocomplete="title"
+                        :maxlength="titleMaxLength"
                     />
+                    <p v-if="maxTitleLengthReached" class="text-red-500">
+                        Warning! Max title length is {{ titleMaxLength }} characters.
+                    </p>
                 </div>
 
                 <div class="mt-4">
@@ -79,7 +79,11 @@ const submit = () => {
                         class="mt-1 block w-full"
                         v-model="form.description"
                         autocomplete="description"
+                        :maxlength="descMaxLength"
                     />
+                    <p v-if="maxDescLengthReached" class="text-red-500">
+                        Warning! Max description length is {{ descMaxLength }} characters.
+                    </p>
                 </div>
 
                 <!-- Types -->
@@ -116,3 +120,36 @@ const submit = () => {
         </div>
     </AuthenticatedLayout>
 </template>
+
+<script>
+import {useForm} from "@inertiajs/vue3";
+
+const form = useForm({
+    label: '',
+    title: '',
+    description: '',
+    type: '',
+    status: '',
+});
+
+export default {
+    data () {
+        return {
+            labelMaxLength: 15,
+            titleMaxLength: 100,
+            descMaxLength: 2048
+        };
+    },
+    computed: {
+        maxLabelLengthReached() {
+            return form.label.length >= this.labelMaxLength;
+        },
+        maxTitleLengthReached() {
+            return form.title.length >= this.titleMaxLength;
+        },
+        maxDescLengthReached() {
+            return form.description.length >= this.descMaxLength;
+        }
+    }
+}
+</script>

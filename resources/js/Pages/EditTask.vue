@@ -7,6 +7,7 @@ import InputLabel from "@/Components/InputLabel.vue";
 import TextboxInput from "@/Components/TextboxInput.vue";
 import TextInput from "@/Components/TextInput.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import {computed} from "vue";
 
 const props = defineProps({
     types: {
@@ -16,7 +17,7 @@ const props = defineProps({
         type: Array
     },
     task: {
-        type: Array
+        type: Object
     }
 });
 
@@ -28,6 +29,11 @@ const form = useForm({
     status: props.task.data.status.name,
 })
 
+let maxLengths = [];
+maxLengths['label'] = 15;
+maxLengths['title'] = 100;
+maxLengths['description'] = 2048;
+
 const submit = () => {
     form.put(`/tasks/${props.task.data.id}`, {
         data: {
@@ -36,6 +42,16 @@ const submit = () => {
         onFinish: () => Inertia.visit('/tasks/' + props.task.data.id)
     });
 }
+
+let maxLabelLengthReached = computed(() => {
+    return form.label.length >= maxLengths['label'];
+});
+let maxTitleLengthReached = computed(() => {
+    return form.title.length >= maxLengths['title'];
+});
+let maxDescriptionLengthReached = computed(() => {
+    return form.description.length >= maxLengths['description'];
+});
 </script>
 
 <template>
@@ -60,7 +76,11 @@ const submit = () => {
                         required
                         autofocus
                         autocomplete="label"
+                        :maxlength="maxLengths['label']"
                     />
+                    <p v-if="maxLabelLengthReached" class="text-red-500">
+                        Warning! Max label length is {{ maxLengths['label'] }} characters.
+                    </p>
                 </div>
 
                 <div class="mt-4">
@@ -72,7 +92,11 @@ const submit = () => {
                         v-model="form.title"
                         required
                         autocomplete="title"
+                        :maxlength="maxLengths['title']"
                     />
+                    <p v-if="maxTitleLengthReached" class="text-red-500">
+                        Warning! Max title length is {{ maxLengths['title'] }} characters.
+                    </p>
                 </div>
 
                 <div class="mt-4">
@@ -83,7 +107,11 @@ const submit = () => {
                         class="mt-1 block w-full"
                         v-model="form.description"
                         autocomplete="description"
+                        :maxlength="maxLengths['description']"
                     />
+                    <p v-if="maxDescriptionLengthReached" class="text-red-500">
+                        Warning! Max description length is {{ maxLengths['description'] }} characters.
+                    </p>
                 </div>
 
                 <!-- Types -->
