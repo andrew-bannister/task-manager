@@ -16,7 +16,7 @@ let props = defineProps({
                 <h2
                     class="text-xl font-semibold leading-tight text-gray-800"
                 >
-                    Task Viewer
+                    Task View
                 </h2>
                 <div class="grid place-items-end">
                     <p>
@@ -26,45 +26,16 @@ let props = defineProps({
                 </div>
             </div>
         </template>
-        <div class="mt-4">
-            <p>
-                <label for="label">Task Label:</label>
-            </p>
-            <p>
-                <span id="label">{{ task.data.label }}</span>
-            </p>
-        </div>
-        <div class="mt-4">
-            <p>
-                <label for="title">Task Title:</label>
-            </p>
-            <p>
-                <span id="title">{{ task.data.title }}</span>
-            </p>
-        </div>
-        <div class="mt-4">
-            <p>
-                <label for="description">Task Description:</label>
-            </p>
-            <p>
-                <span id="description">{{ task.data.description }}</span>
-            </p>
-        </div>
-        <div class="mt-4">
-            <p>
-                <label for="type">Task Type:</label>
-            </p>
-            <p>
-                <span id="type">{{ task.data.type.name }}</span>
-            </p>
-        </div>
-        <div class="mt-4">
-            <p>
-                <label for="status">Task Status:</label>
-            </p>
-            <p>
-                <span id="status">{{ task.data.status.name }}</span>
-            </p>
+        <div class="flex justify-center">
+            <div class="flex flex-col place-content-center gap-6 text-center max-w-screen-sm w-fit rounded-lg bg-white pt-6 my-6 mx-32 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[#FF2D20] md:row-span-3 lg:p-10 lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[#FF2D20]">
+                <p class="text-left text-gray-400">{{ task.data.label }}</p>
+                <p class="overflow-hidden font-bold text-center">{{ task.data.title }}</p>
+                <p class="overflow-hidden text-center">{{ task.data.description }}</p>
+                <div class="flex justify-between items-center overflow-hidden w-full mt-6">
+                    <span class="text-left text-green-300">{{ task.data.type.name }}</span>
+                    <span class="text-right text-red-300">{{ task.data.status.name }}</span>
+                </div>
+            </div>
         </div>
     </AuthenticatedLayout>
 </template>
