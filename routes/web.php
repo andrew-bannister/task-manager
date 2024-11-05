@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EpicController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\TaskController;
@@ -24,8 +25,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
-
 Route::group(['prefix' => 'tasks', 'middleware' => ['auth', 'verified']], function () {
     Route::prefix('new')->group(function () {
         Route::get('/', [TaskController::class, 'create'])->name('task.new');
@@ -39,6 +38,14 @@ Route::group(['prefix' => 'tasks', 'middleware' => ['auth', 'verified']], functi
     });
 });
 
+Route::group(['prefix' => 'epics', 'middleware' => ['auth', 'verified']], function () {
+    Route::get('/', [EpicController::class, 'index'])->name('epics');
+    Route::prefix('new')->group(function () {
+        Route::get('/', [EpicController::class, 'create'])->name('epic.new');
+        Route::post('/', [EpicController::class, 'store'])->name('epic.store');
+    });
+});
+
 Route::group(['prefix' => 'statuses', 'middleware' => ['auth', 'verified']], function () {
     Route::get('/', [StatusController::class, 'index'])->name('statuses');
     Route::prefix('status')->group(function () {
@@ -49,3 +56,6 @@ Route::group(['prefix' => 'statuses', 'middleware' => ['auth', 'verified']], fun
         });
     });
 });
+
+require __DIR__.'/auth.php';
+require __DIR__.'/api.php';

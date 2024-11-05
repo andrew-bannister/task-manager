@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Http\Resources\StatusResource;
 use App\Http\Resources\TaskResource;
 use App\Http\Resources\TypeResource;
+use App\Models\Epic;
 use App\Models\Status;
 use App\Models\Task;
 use App\Models\Type;
@@ -26,11 +27,16 @@ class TaskService
         }])->find($user->id)->statuses->pluck('name'), true);
     }
 
-    public function getTasks(User $user): array
+    public function getNonEpicTasks(User $user): array
     {
+        $epic = Type::where('name', 'epic')->first();
+
         return json_decode(
             json_encode(
-                TaskResource::collection(Task::where('user_id', $user->id)->get())
+                TaskResource::collection(
+                    Task::where('user_id', $user->id)
+                        ->where('type_id', '!=', $epic->id)
+                        ->get())
             ), true);
     }
 
@@ -57,6 +63,15 @@ class TaskService
         ];
     }
 
+    public function arrangeEpicArrayForInput($task, $childTasks, $user): array
+    {
+        return [
+            'user_id' => $user->id,
+            'task_id' => $task->id,
+            'children' => json_encode($childTasks),
+        ];
+    }
+
     public function getTypeFromName(string $name): TypeResource
     {
          return new TypeResource(Type::where('name', $name)->first());
@@ -73,5 +88,10 @@ class TaskService
         $task['status'] = new StatusResource(Status::find($task->status_id));
 
         return $task;
+    }
+
+    public function getEpics(User $user)
+    {
+        $epics = Epic::where('user', $user->id)->get();
     }
 }

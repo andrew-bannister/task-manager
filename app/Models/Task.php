@@ -42,4 +42,9 @@ class Task extends Model
     {
         return $this->belongsTo(Type::class);
     }
+
+    public function epic(): BelongsTo
+    {
+        return $this->belongsTo(Epic::class);
+    }
 }

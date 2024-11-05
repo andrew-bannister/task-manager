@@ -62,4 +62,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Status::class)->withPivot('order');
     }
+
+    public function epics(): HasMany
+    {
+        return $this->hasMany(Epic::class);
+    }
 }

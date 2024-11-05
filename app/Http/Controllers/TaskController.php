@@ -8,7 +8,6 @@ use App\Models\Task;
 use App\Models\Type;
 use App\Services\TaskService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 
 class TaskController extends Controller
@@ -24,7 +23,7 @@ class TaskController extends Controller
     public function index()
     {
         $statuses = $this->taskService->getStatuses($this->user);
-        $tasks = $this->taskService->getTasks($this->user);
+        $tasks = $this->taskService->getNonEpicTasks($this->user);
         $statuses = $this->taskService->getTasksInCorrectStatus($statuses, $tasks);
 
         return Inertia::render('Dashboard', [
